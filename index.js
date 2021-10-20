@@ -17,13 +17,17 @@ var useragent = "'Garmin watchface bas.aan.de.wiel@gmail.com";
 var hostname = "api.met.no";
 var port     = 443;
 var method   = "GET";
+var lat	 = 52.22; //defaults to Almere, NL; overwritten in weather request; then used in next call to readDcurrentWeather
+var lon = 5.13; //defaults to ALmere, NL
 
 function readCurrentWeather() {
   //READ wwather from met.no
   
   //construct header with modified since
   var headerObj = {"User-Agent":useragent, "If-Modified-Since":ifmodified};
-  var path     = "/weatherapi/locationforecast/2.0/compact?lat=52.22&lon=5.13";
+  var path     = "/weatherapi/locationforecast/2.0/compact?lat=" + lat + "&lon=" + lon;
+  console.log("path= " + path);
+  //var path     = "/weatherapi/locationforecast/2.0/compact?lat=52.22&lon=5.13";
   var optionsGET3 = {"hostname":hostname, "port":port, "path":path, "headers":headerObj, "method":method};
 
   const req = https.request(optionsGET3, response => {
@@ -81,9 +85,15 @@ https.createServer(options, app).listen(9090)
 app.use(express.static('public'));
 app.use(cors());
 
-app.get("/weather/current", getCurrentWeather);
-function getCurrentWeather (request, response) {
-	response.send(curWeather); //sent back last saved curWeather
-}
+app.get("/weather/current", function(req, res){
+	lat = req.query.lat;
+	console.log("lat: " + lat);
+	lon = req.query.lon;
+	console.log("lon= " + lon);
+//	readCurrentWeather(); //ONLY FOR TESTIN
+//	console.log("curWeather= " + curWeather);
+	res.send(curWeather);
+});
+
 
 
