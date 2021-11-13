@@ -26,7 +26,7 @@ function readCurrentWeather() {
   //construct header with modified since
   var headerObj = {"User-Agent":useragent, "If-Modified-Since":ifmodified};
   var path     = "/weatherapi/locationforecast/2.0/compact?lat=" + lat + "&lon=" + lon;
-  console.log("path= " + path);
+  //console.log("path= " + path);
   //var path     = "/weatherapi/locationforecast/2.0/compact?lat=52.22&lon=5.13";
   var optionsGET3 = {"hostname":hostname, "port":port, "path":path, "headers":headerObj, "method":method};
 
@@ -87,9 +87,9 @@ app.use(cors());
 
 app.get("/weather/current", function(req, res){
 	lat = req.query.lat;
-	console.log("lat: " + lat);
+//	console.log("lat: " + lat);
 	lon = req.query.lon;
-	console.log("lon= " + lon);
+//	console.log("lon= " + lon);
 //	readCurrentWeather(); //ONLY FOR TESTIN
 //	console.log("curWeather= " + curWeather);
 	res.send(curWeather);
