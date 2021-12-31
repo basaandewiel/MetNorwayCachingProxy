@@ -74,26 +74,46 @@ setInterval(() => { //is called every x msecs
 //#############################################################
 //create HTTPS server
 //
-const express = require("express");
-// To solve the cors issue
-const cors=require('cors');
-	
-// Create a service (the app object is just a callback).
-var app = express();
-https.createServer(options, app).listen(9090)
-	
-app.use(express.static('public'));
-app.use(cors());
+var cluster = require('cluster');
+if (cluster.isMaster) {
+	  cluster.fork();
 
-app.get("/weather/current", function(req, res){
-	lat = req.query.lat;
-//	console.log("lat: " + lat);
-	lon = req.query.lon;
-//	console.log("lon= " + lon);
-//	readCurrentWeather(); //ONLY FOR TESTIN
-//	console.log("curWeather= " + curWeather);
-	res.send(curWeather);
-});
+	cluster.on('exit', function(worker, code, signal) {
+	    console.log(`worker ${worker.process.pid} died`);
+	    cluster.fork();
+        });
+
+}
+
+if (cluster.isWorker) {
+  const express = require("express");
+  //To solve the cors issue
+  const cors=require('cors');
+	
+  process.on('uncaughtException', err => {
+           console.error('There was an uncaught error', err)
+           process.exit(1) //mandatory (as per the Node.js docs)
+  })
+	
+  // Create a service (the app object is just a callback).
+  var app = express();
+  https.createServer(options, app).listen(9090)
+	
+  app.use(express.static('public'));
+  app.use(cors());
+
+  app.get("/weather/current", function(req, res){
+        lat = req.query.lat;
+        //      console.log("lat: " + lat);
+        lon = req.query.lon;
+        //      console.log("lon= " + lon);
+        //      readCurrentWeather(); //ONLY FOR TESTIN
+        //      console.log("curWeather= " + curWeather);
+        res.send(curWeather);
+  });
+ }
+
+
 
 
 
