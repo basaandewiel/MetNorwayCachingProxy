@@ -8,3 +8,4 @@ The GPS coordinates of the location for which the weather must be retrieved can 
 
 I use this proxy myself to retrieve weather information via a custom Garmin watchface (running on Garmin smart watches).
 
+ 
